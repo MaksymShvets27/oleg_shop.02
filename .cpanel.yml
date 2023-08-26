@@ -1,4 +1,4 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/maxim/public_html/
+    - export DEPLOYPATH=/home3/msshopor/public_html/
     - /bin/cp -R * $DEPLOYPATH
