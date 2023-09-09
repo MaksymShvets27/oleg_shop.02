@@ -14,15 +14,11 @@ export const HeaderContainer = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-around;
-
-  flex-direction: column;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
   margin-top: 18px;
   padding: 0px 16px;
   gap: 20px;
-  @media (min-width: 686px) {
-    flex-direction: row;
-  }
 `;
 
 export const BiCartStyled = styled(BiCart)`

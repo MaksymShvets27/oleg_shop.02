@@ -1,13 +1,29 @@
 import { useNavigate } from "react-router-dom";
-import { LogoIcon } from "./Logo.styled";
+import {
+  FacebookIconStyled,
+  InstagramIconStyled,
+  LogoIcon,
+  LogoIconsGroup,
+} from "./Logo.styled";
 
 export const Logo = () => {
   const navigate = useNavigate();
   return (
-    <LogoIcon
-      onClick={() => {
-        navigate("/");
-      }}
-    />
+    <LogoIconsGroup>
+      <LogoIcon
+        onClick={() => {
+          navigate("/");
+        }}
+      />
+      <a href="https://www.instagram.com/msshopua2023/" class="link">
+        <InstagramIconStyled />
+      </a>
+      <a
+        href="https://www.facebook.com/profile.php?id=100091605982461"
+        class="link"
+      >
+        <FacebookIconStyled />
+      </a>
+    </LogoIconsGroup>
   );
 };

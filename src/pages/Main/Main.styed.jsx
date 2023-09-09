@@ -2,7 +2,6 @@ import { GrStar } from "react-icons/gr";
 import styled from "styled-components";
 
 export const GoodsListStyled = styled.ul`
-  min-width: 260px;
   display: flex;
   align-content: center;
   justify-content: space-around;

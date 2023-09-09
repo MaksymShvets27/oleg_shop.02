@@ -11,11 +11,13 @@ import {
 import { useEffect, useState } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../../firebase/config";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { authClearCashList } from "../../redux/auth.thunk";
 import { HistoryMessengeForUser } from "../../components/Header/UserModal/UserModal.styled";
 
 export const CheckoutPage = () => {
+  const { state } = useLocation();
+  const userMessege = state.userMessege;
   const user = useSelector(selectUser);
   const [userFullName, setFullName] = useState("");
   const [userNumber, setUserNumber] = useState("");
@@ -126,6 +128,7 @@ export const CheckoutPage = () => {
           id: `${userEmail}${date}`,
           status: "create",
           cashList: user.cashList,
+          userMessege,
         });
         dispatch(authClearCashList());
         navigation("/");

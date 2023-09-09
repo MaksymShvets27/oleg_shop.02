@@ -90,39 +90,38 @@ export const CategoryPage = () => {
                   if (item.category === category) {
                     i++;
                     if (
-                      (window.innerWidth === 2160 && i > 8) ||
-                      (window.innerWidth === 1152 && i > 6) ||
-                      (window.innerWidth === 480 && i > 4)
+                      (window.innerWidth >= 2160 && i <= 8) ||
+                      (window.innerWidth >= 1152 && i <= 6) ||
+                      (window.innerWidth < 1152 && i <= 4)
                     ) {
-                      return;
+                      return (
+                        <GoodsListItemStyled
+                          key={index}
+                          onClick={() => handleOpenModal(item)}
+                          style={{
+                            backgroundImage: `url(${
+                              typeof item.image === "string"
+                                ? item.image
+                                : item.image[0]
+                            })`,
+                          }}
+                        >
+                          {user.favoriteList &&
+                            user.favoriteList.map((good) => {
+                              if (good.name === item.name) {
+                                return <StyledGrStar />;
+                              }
+                            })}
+                          {date - item.createTime.seconds < 259200 && (
+                            <GoodsListItemIsNew>Новинка!</GoodsListItemIsNew>
+                          )}
+                          <GoodsListItemInfoStyled>
+                            <GoodsListItemName>{item.name}</GoodsListItemName>
+                            <p>{item.price} грн.</p>
+                          </GoodsListItemInfoStyled>
+                        </GoodsListItemStyled>
+                      );
                     }
-                    return (
-                      <GoodsListItemStyled
-                        key={index}
-                        onClick={() => handleOpenModal(item)}
-                        style={{
-                          backgroundImage: `url(${
-                            typeof item.image === "string"
-                              ? item.image
-                              : item.image[0]
-                          })`,
-                        }}
-                      >
-                        {user.favoriteList &&
-                          user.favoriteList.map((good) => {
-                            if (good.name === item.name) {
-                              return <StyledGrStar />;
-                            }
-                          })}
-                        {date - item.createTime.seconds < 259200 && (
-                          <GoodsListItemIsNew>Новинка!</GoodsListItemIsNew>
-                        )}
-                        <GoodsListItemInfoStyled>
-                          <GoodsListItemName>{item.name}</GoodsListItemName>
-                          <p>{item.price} грн.</p>
-                        </GoodsListItemInfoStyled>
-                      </GoodsListItemStyled>
-                    );
                   }
                 })}
               </CategoryItemGoodsList>

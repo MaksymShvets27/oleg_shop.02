@@ -96,6 +96,13 @@ export const OrdersList = () => {
                 </>
               );
             })}
+            order.userMessege &&{" "}
+            <p>
+              Додаткова інформація:{" "}
+              {order.userMessege
+                ? order.userMessege
+                : "Без додаткової інформації"}
+            </p>
             <OrderOperationList>
               <StyledGrOrderDelete onClick={() => deleteOrder(order.id)} />
               <StyledGrOrderCheck onClick={() => takeOrder(order.id)} />

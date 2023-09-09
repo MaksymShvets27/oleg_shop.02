@@ -9,17 +9,19 @@ import {
   CashListItemStyled,
   CashListSendButton,
   CashListStyled,
+  CashListUserMessege,
   CheckListTitle,
   StyledGrFormDelete,
 } from "./CashList.styled";
 import { cashListRemoveGood } from "../../redux/cashList.thunk";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const CashListPage = () => {
   const { cashList } = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigation = useNavigate();
-
+  const [userMessege, setUserMessege] = useState("");
   return (
     <CashListStyled>
       <CheckListTitle>Список товарів</CheckListTitle>
@@ -49,7 +51,13 @@ export const CashListPage = () => {
               </CashListItemStyled>
             );
           })}
-          <CashListSendButton onClick={() => navigation("/checkout")}>
+          <CashListUserMessege
+            placeholder="Додаткова інформація. Наприклад: колір, розмір."
+            onChange={(e) => setUserMessege(e.target.value)}
+          ></CashListUserMessege>
+          <CashListSendButton
+            onClick={() => navigation("/checkout", { state: { userMessege } })}
+          >
             Перейти до оформлення відправки
           </CashListSendButton>
         </>

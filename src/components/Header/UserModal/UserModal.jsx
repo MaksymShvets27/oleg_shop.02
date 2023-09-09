@@ -559,6 +559,12 @@ export const UserModal = ({ closeUserModal, typeModal }) => {
                               </UserModalHistoryOrderItem>
                             );
                           })}
+                          <UserModalHistoryItemP>
+                            Додаткова інформація:{" "}
+                            {order.userMessege
+                              ? order.userMessege
+                              : "Без додаткової інформації"}
+                          </UserModalHistoryItemP>
                         </HistoryListItem>
                       );
                     })}

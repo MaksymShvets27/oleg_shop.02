@@ -11,20 +11,15 @@ import {
 import { CardModal } from "../../components/CardModal/CardModal";
 import {
   collection,
-  doc,
   getDocs,
   limit,
-  onSnapshot,
   orderBy,
   query,
   startAfter,
-  startAt,
-  updateDoc,
 } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../redux/selectors";
-import { nanoid } from "nanoid";
 import localStorage from "redux-persist/es/storage";
 import { authSetFavoriteList, authSignInUser } from "../../redux/auth.thunk";
 

@@ -134,3 +134,35 @@ export const CashListSendButton = styled.button`
     font-size: 24px;
   }
 `;
+
+export const CashListUserMessege = styled.textarea`
+  display: flex;
+  justify-content: center;
+  width: 90%;
+  height: 50px;
+  font-size: 8px;
+  font-weight: bolder;
+  justify-content: space-around;
+  align-items: center;
+  background: white;
+  color: black;
+  padding: 5px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 2px solid #1a1a1a;
+
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+
+  @media (min-width: 768px) {
+    font-size: 12px;
+    width: 50%;
+    height: 100px;
+    border-radius: 20px;
+  }
+  @media (min-width: 1440px) {
+    font-size: 20px;
+    padding: 10px;
+  }
+`;
