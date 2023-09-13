@@ -45,6 +45,7 @@ export const SearchPage = () => {
   const [card, setCard] = useState();
   const [lastElements, setLastElements] = useState("");
   const [filter, setFilter] = useState("");
+  const [sexFilter, setSexFilter] = useState("");
   const [categorySelect, setCategorySelect] = useState(
     state && state.category ? state.category : ""
   );
@@ -231,27 +232,203 @@ export const SearchPage = () => {
     });
   };
 
+  const getGoodsByCategoryAndSex = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
+    });
+  };
+
+  const getMoreGoodsByCategoryAndSex = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
+    });
+  };
+
+  const getGoodsByFilterAndSex = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      orderBy("name"),
+      limit(25)
+    );
+    const documentSnapshots = await getDocs(first);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
+        setFiltredGoods((prevstate) => [
+          ...prevstate,
+          { ...doc.data(), id: doc.id },
+        ]);
+      }
+    });
+  };
+
+  const getMoreGoodsByFilterAndSex = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      orderBy("name"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
+        setFiltredGoods((prevstate) => [
+          ...prevstate,
+          { ...doc.data(), id: doc.id },
+        ]);
+      }
+    });
+  };
+
+  const getGoodsByFilterAndCategoryAndSex = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+    let array = [];
+    documentSnapshots.docs.map((doc) => {
+      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
+        array.push({ ...doc.data(), id: doc.id });
+      }
+    });
+    setFiltredGoods(array);
+  };
+
+  const getMoreGoodsByFilterAndCategoryAndSex = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
+        setFiltredGoods((prevstate) => [
+          ...prevstate,
+          { ...doc.data(), id: doc.id },
+        ]);
+      }
+    });
+  };
+
+  const getGoodsBySex = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
+    });
+  };
+
   useEffect(() => {
-    if (!(filter.length > 0) && !categorySelect) {
+    if (!(filter.length > 0) && !categorySelect && !sexFilter) {
       getAllPost();
-    } else if (!(filter.length > 0) && categorySelect) {
+    } else if (!(filter.length > 0) && categorySelect && !sexFilter) {
       getGoodsByCategory();
-    } else if (filter.length > 0 && !categorySelect) {
+    } else if (filter.length > 0 && !categorySelect && !sexFilter) {
       getGoodsByFilter();
-    } else {
+    } else if (filter.length > 0 && categorySelect && !sexFilter) {
       getGoodsByFilterAndCategory();
+    } else if (!(filter.length > 0) && categorySelect && sexFilter) {
+      getGoodsByCategoryAndSex();
+    } else if (filter.length > 0 && !categorySelect && sexFilter) {
+      getGoodsByFilterAndSex();
+    } else if (filter.length > 0 && categorySelect && sexFilter) {
+      getGoodsByFilterAndCategoryAndSex();
+    } else if (!filter.length > 0 && !categorySelect && sexFilter) {
+      getGoodsBySex();
     }
-  }, [filter, categorySelect]);
+  }, [filter, categorySelect, sexFilter]);
 
   const getMore = () => {
-    if (!(filter.length > 0) && !categorySelect) {
+    if (!(filter.length > 0) && !categorySelect && !sexFilter) {
       getNewPosts();
-    } else if (!(filter.length > 0) && categorySelect) {
+    } else if (!(filter.length > 0) && categorySelect && !sexFilter) {
       getMoreGoodsByCategory();
-    } else if (filter.length > 0 && !categorySelect) {
+    } else if (filter.length > 0 && !categorySelect && !sexFilter) {
       getMoreGoodsByFilter();
-    } else {
+    } else if (filter.length > 0 && categorySelect && !sexFilter) {
       getMoreGoodsByFilterAndCategory();
+    } else if (!(filter.length > 0) && categorySelect && sexFilter) {
+      getMoreGoodsByCategoryAndSex();
+    } else if (filter.length > 0 && !categorySelect && sexFilter) {
+      getMoreGoodsByFilterAndSex();
+    } else if (filter.length > 0 && categorySelect && sexFilter) {
+      getMoreGoodsByFilterAndCategoryAndSex();
     }
   };
 
@@ -310,6 +487,25 @@ export const SearchPage = () => {
           )
         )}
       </SearchPageSelect>
+      <SearchPageSelect
+        id="sexFilter"
+        name="sexFilter"
+        value={sexFilter}
+        onChange={(event) => {
+          setSexFilter(event.target.value);
+        }}
+      >
+        <AdminFormOption key={nanoid()} value={``}>
+          Для всіх
+        </AdminFormOption>
+        <AdminFormOption key={nanoid()} value={`Чоловік`}>
+          Для нього
+        </AdminFormOption>
+        <AdminFormOption key={nanoid()} value={`Жінка`}>
+          Для неї
+        </AdminFormOption>
+      </SearchPageSelect>
+
       <GoodsListStyled>
         {filtredGoods.length > 0 ? (
           filtredGoods.map((item, index) => {
@@ -350,7 +546,7 @@ export const SearchPage = () => {
           </NoGoods>
         )}
       </GoodsListStyled>
-      <MoreButton onClick={getMore}>Побачити більше</MoreButton>
+      <MoreButton onClick={getMore}>Завантажити більше</MoreButton>
       {openModal && <CardModal card={card} closeModal={closeModal} />}
     </SearchPageContainer>
   );
