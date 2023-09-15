@@ -3834,9 +3834,10 @@ This typically indicates that your device does not have a healthy Internet conne
     border-color: green;
   }
   @media (min-width: 768px) {
-    font-size: 8px;
+    font-size: 12px;
     border-radius: 20px;
     padding: 20px;
+    width: 25%;
   }
 `,vV=P.div`
   width: 40px;
@@ -4324,8 +4325,8 @@ padding:10px;
 `,Qy=P.li`
   display: flex;
   justify-content: center;
-  width: 110px;
-  min-height: 110px;
+  width: 100px;
+  min-height: 100px;
   font-size: 6px;
   font-weight: bolder;
 
