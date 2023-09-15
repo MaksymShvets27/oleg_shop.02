@@ -49,9 +49,10 @@ export const OrderListItem = styled.li`
     border-color: green;
   }
   @media (min-width: 768px) {
-    font-size: 8px;
+    font-size: 12px;
     border-radius: 20px;
     padding: 20px;
+    width: 25%;
   }
 `;
 

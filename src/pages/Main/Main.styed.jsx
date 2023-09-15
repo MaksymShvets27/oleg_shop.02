@@ -20,8 +20,8 @@ export const GoodsListStyled = styled.ul`
 export const GoodsListItemStyled = styled.li`
   display: flex;
   justify-content: center;
-  width: 110px;
-  min-height: 110px;
+  width: 100px;
+  min-height: 100px;
   font-size: 6px;
   font-weight: bolder;
 
