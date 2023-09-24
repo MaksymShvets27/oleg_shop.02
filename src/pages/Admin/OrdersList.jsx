@@ -96,9 +96,8 @@ export const OrdersList = () => {
                 </>
               );
             })}
-            order.userMessege &&{" "}
             <p>
-              Додаткова інформація:{" "}
+              Додаткова інформація:
               {order.userMessege
                 ? order.userMessege
                 : "Без додаткової інформації"}

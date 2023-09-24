@@ -160,6 +160,12 @@ export const AdminPage = () => {
           >
             Жінка
           </AdminFormOption>
+          <AdminFormOption
+            value="Унісекс"
+            selected={(state && state.sex === "Унісекс" && "selected") || null}
+          >
+            Унісекс
+          </AdminFormOption>
         </AdminFormSelect>
         <p>Розмір</p>
         <AdminFormInput

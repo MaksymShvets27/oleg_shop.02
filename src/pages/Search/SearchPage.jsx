@@ -1,8 +1,12 @@
 import { useLocation } from "react-router-dom";
 import {
   NoGoods,
+  SearchPageCheckBox,
+  SearchPageCheckBoxsGroup,
   SearchPageContainer,
   SearchPageInput,
+  SearchPageLabel,
+  SearchPageLegend,
   SearchPageSelect,
 } from "./SearchPage.styled";
 import {
@@ -39,7 +43,7 @@ export const SearchPage = () => {
   const state = location.state;
   const user = useSelector(selectUser);
   const [goods, setGoods] = useState([]);
-
+  const [listLength, setListLength] = useState(24);
   const [filtredGoods, setFiltredGoods] = useState(goods);
   const [openModal, setOpenModal] = useState(false);
   const [card, setCard] = useState();
@@ -49,7 +53,9 @@ export const SearchPage = () => {
   const [categorySelect, setCategorySelect] = useState(
     state && state.category ? state.category : ""
   );
+  const [sizeFilter, setSizeFilter] = useState([]);
 
+  const order = ["xs", "s", "m", "l", "xl", "xl+"];
   let date = new Date().getTime() / 1000;
 
   const handleOpenModal = (item) => {
@@ -394,43 +400,733 @@ export const SearchPage = () => {
     });
   };
 
-  useEffect(() => {
-    if (!(filter.length > 0) && !categorySelect && !sexFilter) {
-      getAllPost();
-    } else if (!(filter.length > 0) && categorySelect && !sexFilter) {
-      getGoodsByCategory();
-    } else if (filter.length > 0 && !categorySelect && !sexFilter) {
-      getGoodsByFilter();
-    } else if (filter.length > 0 && categorySelect && !sexFilter) {
-      getGoodsByFilterAndCategory();
-    } else if (!(filter.length > 0) && categorySelect && sexFilter) {
-      getGoodsByCategoryAndSex();
-    } else if (filter.length > 0 && !categorySelect && sexFilter) {
-      getGoodsByFilterAndSex();
-    } else if (filter.length > 0 && categorySelect && sexFilter) {
-      getGoodsByFilterAndCategoryAndSex();
-    } else if (!filter.length > 0 && !categorySelect && sexFilter) {
-      getGoodsBySex();
-    }
-  }, [filter, categorySelect, sexFilter]);
+  const getMoreGoodsBySex = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
 
-  const getMore = () => {
-    if (!(filter.length > 0) && !categorySelect && !sexFilter) {
-      getNewPosts();
-    } else if (!(filter.length > 0) && categorySelect && !sexFilter) {
-      getMoreGoodsByCategory();
-    } else if (filter.length > 0 && !categorySelect && !sexFilter) {
-      getMoreGoodsByFilter();
-    } else if (filter.length > 0 && categorySelect && !sexFilter) {
-      getMoreGoodsByFilterAndCategory();
-    } else if (!(filter.length > 0) && categorySelect && sexFilter) {
-      getMoreGoodsByCategoryAndSex();
-    } else if (filter.length > 0 && !categorySelect && sexFilter) {
-      getMoreGoodsByFilterAndSex();
-    } else if (filter.length > 0 && categorySelect && sexFilter) {
-      getMoreGoodsByFilterAndCategoryAndSex();
+    documentSnapshots.docs.map((doc) => {
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
+    });
+  };
+  // -----------------------------------------------
+  const getPostsBySize = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getNewPostsBySize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getGoodsByCategoryAndSize = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getMoreGoodsByCategoryAndSize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getGoodsByFilterAndSize = async () => {
+    setFiltredGoods([]);
+    const first = query(collection(db, "goods"), orderBy("name"), limit(25));
+    const documentSnapshots = await getDocs(first);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getMoreGoodsByFilterAndSize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      orderBy("name"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getGoodsByFilterAndCategoryAndSize = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getMoreGoodsByFilterAndCategoryAndSize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getGoodsByCategoryAndSexAndSize = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getMoreGoodsByCategoryAndSexAndSize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getGoodsByFilterAndSexAndSize = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      orderBy("name"),
+      limit(25)
+    );
+    const documentSnapshots = await getDocs(first);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getMoreGoodsByFilterAndSexAndSize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      where("size", "==", sizeFilter),
+      orderBy("name"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getGoodsByFilterAndCategoryAndSexAndSize = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getMoreGoodsByFilterAndCategoryAndSexAndSize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("category", "==", categorySelect),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (
+          doc.data().size.toLowerCase().includes(size) &&
+          doc.data().name.toLowerCase().includes(filter.toLowerCase())
+        ) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getGoodsBySexAndSize = async () => {
+    setFiltredGoods([]);
+    const first = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(first);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+
+  const getMoreGoodsBySexAndSize = async () => {
+    const next = query(
+      collection(db, "goods"),
+      where("sex", "==", sexFilter),
+      orderBy("createTime", "desc"),
+      startAfter(lastElements),
+      limit(24)
+    );
+    const documentSnapshots = await getDocs(next);
+    // Get the last visible document
+    const lastVisible =
+      documentSnapshots.docs[documentSnapshots.docs.length - 1];
+    setLastElements(lastVisible);
+
+    documentSnapshots.docs.map((doc) => {
+      sizeFilter.map((size) => {
+        console.log(doc.data().size);
+        if (doc.data().size.toLowerCase().includes(size)) {
+          setFiltredGoods((prevstate) => [
+            ...prevstate,
+            { ...doc.data(), id: doc.id },
+          ]);
+        }
+      });
+    });
+  };
+  //---------------------
+  const setSizeGoods = (boolean, size) => {
+    if (boolean && !sizeFilter.includes(size)) {
+      setSizeFilter((prevstate) =>
+        [...prevstate, size].sort((a, b) => {
+          return order.indexOf(a) - order.indexOf(b);
+        })
+      );
+    }
+    if (!boolean) {
+      setSizeFilter((prevstate) =>
+        prevstate
+          .filter((item) => item !== size)
+          .sort((a, b) => {
+            return order.indexOf(a) - order.indexOf(b);
+          })
+      );
     }
   };
+
+  useEffect(() => {
+    setListLength(24);
+    if (
+      !(filter.length > 0) &&
+      !categorySelect &&
+      !sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getAllPost();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      !sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getGoodsByCategory();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      !sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getGoodsByFilter();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      !sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getGoodsByFilterAndCategory();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getGoodsByCategoryAndSex();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getGoodsByFilterAndSex();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getGoodsByFilterAndCategoryAndSex();
+    } else if (
+      !filter.length > 0 &&
+      !categorySelect &&
+      sexFilter &&
+      !sizeFilter.length > 0
+    ) {
+      getGoodsBySex();
+    } else if (
+      !(filter.length > 0) &&
+      !categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getPostsBySize();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getGoodsByCategoryAndSize();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getGoodsByFilterAndSize();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getGoodsByFilterAndCategoryAndSize();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getGoodsByCategoryAndSexAndSize();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getGoodsByFilterAndSexAndSize();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getGoodsByFilterAndCategoryAndSexAndSize();
+    } else if (
+      !filter.length > 0 &&
+      !categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getGoodsBySexAndSize();
+    }
+  }, [filter, categorySelect, sexFilter, sizeFilter]);
+
+  const getMore = () => {
+    if (
+      !(filter.length > 0) &&
+      !categorySelect &&
+      !sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getNewPosts();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      !sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getMoreGoodsByCategory();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      !sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getMoreGoodsByFilter();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      !sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getMoreGoodsByFilterAndCategory();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getMoreGoodsByCategoryAndSex();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getMoreGoodsByFilterAndSex();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getMoreGoodsByFilterAndCategoryAndSex();
+    } else if (
+      !(filter.length > 0) &&
+      !categorySelect &&
+      sexFilter &&
+      !(sizeFilter.length > 0)
+    ) {
+      getMoreGoodsBySex();
+    } else if (
+      !(filter.length > 0) &&
+      !categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getNewPostsBySize();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getMoreGoodsByCategoryAndSize();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getMoreGoodsByFilterAndSize();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      !sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getMoreGoodsByFilterAndCategoryAndSize();
+    } else if (
+      !(filter.length > 0) &&
+      categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getMoreGoodsByCategoryAndSexAndSize();
+    } else if (
+      filter.length > 0 &&
+      !categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getMoreGoodsByFilterAndSexAndSize();
+    } else if (
+      filter.length > 0 &&
+      categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getMoreGoodsByFilterAndCategoryAndSexAndSize();
+    } else if (
+      !filter.length > 0 &&
+      !categorySelect &&
+      sexFilter &&
+      sizeFilter.length > 0
+    ) {
+      getMoreGoodsBySexAndSize();
+    }
+  };
+
+  useEffect(() => {
+    if (filtredGoods.length < listLength) {
+      getMore();
+    }
+  });
 
   return (
     <SearchPageContainer>
@@ -504,8 +1200,94 @@ export const SearchPage = () => {
         <AdminFormOption key={nanoid()} value={`Жінка`}>
           Для неї
         </AdminFormOption>
+        <AdminFormOption key={nanoid()} value={`Унісекс`}>
+          Унісекс
+        </AdminFormOption>
       </SearchPageSelect>
-
+      {categoryList[0].category.includes(categorySelect) && (
+        <>
+          <SearchPageLegend>Розміри</SearchPageLegend>
+          <SearchPageCheckBoxsGroup id="checkboxes">
+            <SearchPageLabel for="xs">
+              XS
+              <SearchPageCheckBox
+                type="checkbox"
+                name="xs"
+                id="xs"
+                onChange={(e) => {
+                  setSizeGoods(e.target.checked, e.target.name);
+                }}
+              />
+            </SearchPageLabel>
+            <SearchPageLabel for="s">
+              S
+              <SearchPageCheckBox
+                type="checkbox"
+                name="s"
+                id="s"
+                onChange={(e) => {
+                  setSizeGoods(e.target.checked, e.target.name);
+                }}
+              />
+            </SearchPageLabel>
+            <SearchPageLabel for="m">
+              M
+              <SearchPageCheckBox
+                type="checkbox"
+                name="m"
+                id="m"
+                onChange={(e) => {
+                  setSizeGoods(e.target.checked, e.target.name);
+                }}
+              />
+            </SearchPageLabel>
+            <SearchPageLabel for="l">
+              L
+              <SearchPageCheckBox
+                type="checkbox"
+                name="l"
+                id="l"
+                onChange={(e) => {
+                  setSizeGoods(e.target.checked, e.target.name);
+                }}
+              />
+            </SearchPageLabel>
+            <SearchPageLabel for="xl">
+              XL
+              <SearchPageCheckBox
+                type="checkbox"
+                name="xl"
+                id="xl"
+                onChange={(e) => {
+                  setSizeGoods(e.target.checked, e.target.name);
+                }}
+              />
+            </SearchPageLabel>
+            <SearchPageLabel for="xxl">
+              XXL
+              <SearchPageCheckBox
+                type="checkbox"
+                name="xxl"
+                id="xxl"
+                onChange={(e) => {
+                  setSizeGoods(e.target.checked, e.target.name);
+                }}
+              />
+            </SearchPageLabel>
+            <SearchPageLabel for="xxxl">
+              XXXL
+              <SearchPageCheckBox
+                type="checkbox"
+                name="xxxl"
+                id="xxxl"
+                onChange={(e) => {
+                  setSizeGoods(e.target.checked, e.target.name);
+                }}
+              />
+            </SearchPageLabel>
+          </SearchPageCheckBoxsGroup>
+        </>
+      )}
       <GoodsListStyled>
         {filtredGoods.length > 0 ? (
           filtredGoods.map((item, index) => {
@@ -546,7 +1328,14 @@ export const SearchPage = () => {
           </NoGoods>
         )}
       </GoodsListStyled>
-      <MoreButton onClick={getMore}>Завантажити більше</MoreButton>
+      <MoreButton
+        onClick={() => {
+          getMore();
+          setListLength(listLength + 24);
+        }}
+      >
+        Завантажити більше
+      </MoreButton>
       {openModal && <CardModal card={card} closeModal={closeModal} />}
     </SearchPageContainer>
   );
