@@ -29,8 +29,6 @@ export const CategoryPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [card, setCard] = useState();
 
-  const [widthHTML, setWidthHTML] = useState("");
-
   let date = new Date().getTime() / 1000;
 
   const handleOpenModal = (item) => {
@@ -64,18 +62,6 @@ export const CategoryPage = () => {
     }
   });
   categoryPageList.sort();
-
-  useEffect(() => {
-    function handleResize() {
-      console.log(window.innerWidth);
-      setWidthHTML(window.innerWidth);
-    }
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [setWidthHTML]);
 
   return (
     <>

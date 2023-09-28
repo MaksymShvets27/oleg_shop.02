@@ -21,7 +21,11 @@ import {
 import { useEffect, useState } from "react";
 import { CardModal } from "../../components/CardModal/CardModal";
 import { AdminFormOption, AdminFormSelect } from "../Admin/Admin.styled";
-import { categoryList } from "../../constants/SelectCategory/SelectCategory";
+import {
+  bootsSize,
+  categoryList,
+  clothesSize,
+} from "../../constants/SelectCategory/SelectCategory";
 import { nanoid } from "nanoid";
 import {
   collection,
@@ -1006,6 +1010,16 @@ export const SearchPage = () => {
     }
   }, [filter, categorySelect, sexFilter, sizeFilter]);
 
+  useEffect(() => {
+    if (document.getElementById("checkboxes")) {
+      var inputs = document.querySelectorAll("input[type='checkbox']");
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].checked = false;
+      }
+    }
+    setSizeFilter([]);
+  }, [filter, categorySelect, sexFilter]);
+
   const getMore = () => {
     if (
       !(filter.length > 0) &&
@@ -1208,83 +1222,43 @@ export const SearchPage = () => {
         <>
           <SearchPageLegend>Розміри</SearchPageLegend>
           <SearchPageCheckBoxsGroup id="checkboxes">
-            <SearchPageLabel for="xs">
-              XS
-              <SearchPageCheckBox
-                type="checkbox"
-                name="xs"
-                id="xs"
-                onChange={(e) => {
-                  setSizeGoods(e.target.checked, e.target.name);
-                }}
-              />
-            </SearchPageLabel>
-            <SearchPageLabel for="s">
-              S
-              <SearchPageCheckBox
-                type="checkbox"
-                name="s"
-                id="s"
-                onChange={(e) => {
-                  setSizeGoods(e.target.checked, e.target.name);
-                }}
-              />
-            </SearchPageLabel>
-            <SearchPageLabel for="m">
-              M
-              <SearchPageCheckBox
-                type="checkbox"
-                name="m"
-                id="m"
-                onChange={(e) => {
-                  setSizeGoods(e.target.checked, e.target.name);
-                }}
-              />
-            </SearchPageLabel>
-            <SearchPageLabel for="l">
-              L
-              <SearchPageCheckBox
-                type="checkbox"
-                name="l"
-                id="l"
-                onChange={(e) => {
-                  setSizeGoods(e.target.checked, e.target.name);
-                }}
-              />
-            </SearchPageLabel>
-            <SearchPageLabel for="xl">
-              XL
-              <SearchPageCheckBox
-                type="checkbox"
-                name="xl"
-                id="xl"
-                onChange={(e) => {
-                  setSizeGoods(e.target.checked, e.target.name);
-                }}
-              />
-            </SearchPageLabel>
-            <SearchPageLabel for="xxl">
-              XXL
-              <SearchPageCheckBox
-                type="checkbox"
-                name="xxl"
-                id="xxl"
-                onChange={(e) => {
-                  setSizeGoods(e.target.checked, e.target.name);
-                }}
-              />
-            </SearchPageLabel>
-            <SearchPageLabel for="xxxl">
-              XXXL
-              <SearchPageCheckBox
-                type="checkbox"
-                name="xxxl"
-                id="xxxl"
-                onChange={(e) => {
-                  setSizeGoods(e.target.checked, e.target.name);
-                }}
-              />
-            </SearchPageLabel>
+            {clothesSize.map((size) => {
+              return (
+                <SearchPageLabel for={size}>
+                  {size.toUpperCase()}
+                  <SearchPageCheckBox
+                    type="checkbox"
+                    name={size}
+                    id={size}
+                    onChange={(e) => {
+                      setSizeGoods(e.target.checked, e.target.name);
+                    }}
+                  />
+                </SearchPageLabel>
+              );
+            })}
+          </SearchPageCheckBoxsGroup>
+        </>
+      )}
+      {categoryList[1].category.includes(categorySelect) && (
+        <>
+          <SearchPageLegend>Розміри</SearchPageLegend>
+          <SearchPageCheckBoxsGroup id="checkboxes">
+            {bootsSize.map((size) => {
+              return (
+                <SearchPageLabel for={size}>
+                  {size}
+                  <SearchPageCheckBox
+                    type="checkbox"
+                    name={size}
+                    id={size}
+                    onChange={(e) => {
+                      setSizeGoods(e.target.checked, e.target.name);
+                    }}
+                  />
+                </SearchPageLabel>
+              );
+            })}
           </SearchPageCheckBoxsGroup>
         </>
       )}

@@ -1,3 +1,22 @@
+export const clothesSize = ["xs", "s", "m", "l", "xl", "xxl", "xxxl"];
+
+export const bootsSize = [
+  "35",
+  "36",
+  "37",
+  "38",
+  "39",
+  "40",
+  "41",
+  "42",
+  "43",
+  "44",
+  "45",
+  "46",
+  "47",
+  "48",
+];
+
 export const categoryList = [
   {
     name: "Одяг",
