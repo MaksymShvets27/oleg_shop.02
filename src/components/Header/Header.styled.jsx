@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { BiCart } from "react-icons/bi";
+import { BiArrowToTop, BiCart } from "react-icons/bi";
 
 export const HeaderStyled = styled.header`
   display: flex;
@@ -98,5 +98,51 @@ export const CashListLength = styled.div`
 
   @media (min-width: 1440px) {
     font-size: 30px;
+  }
+`;
+
+export const ScrolUp = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+
+  border: 1px solid black;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px,
+    rgba(0, 0, 0, 0.22) 0px 15px 12px;
+
+  background-position: 50% 50%;
+  background-size: cover;
+  cursor: pointer;
+  background: green;
+
+  position: fixed;
+  left: 5%;
+  bottom: 5%;
+  z-index: 1;
+
+  @media (min-width: 768px) {
+    width: 75px;
+    height: 75px;
+  }
+
+  @media (min-width: 1440px) {
+    width: 120px;
+    height: 120px;
+  }
+`;
+export const BiArrowToTopStyled = styled(BiArrowToTop)`
+  width: 35px;
+  height: 35px;
+  color: white;
+  @media (min-width: 768px) {
+    width: 60px;
+    height: 60px;
+  }
+  @media (min-width: 1440px) {
+    width: 90px;
+    height: 90px;
   }
 `;

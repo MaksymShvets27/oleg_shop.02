@@ -1137,10 +1137,10 @@ export const SearchPage = () => {
   };
 
   useEffect(() => {
-    if (filtredGoods.length < listLength) {
+    if (filtredGoods.length > 0 && filtredGoods.length < listLength) {
       getMore();
     }
-  });
+  }, [filtredGoods]);
 
   return (
     <SearchPageContainer>
