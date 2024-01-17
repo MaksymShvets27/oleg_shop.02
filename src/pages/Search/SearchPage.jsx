@@ -894,7 +894,7 @@ export const SearchPage = () => {
   };
 
   useEffect(() => {
-    setListLength(24);
+    setFiltredGoods(24);
     if (
       !(filter.length > 0) &&
       !categorySelect &&
@@ -1139,8 +1139,12 @@ export const SearchPage = () => {
   useEffect(() => {
     if (filtredGoods.length > 0 && filtredGoods.length < listLength) {
       getMore();
+      const uniqueGoods = filtredGoods.filter((item, index) => {
+        return arr.indexOf(item) === index;
+      });
+      setFiltredGoods(uniqueGoods);
     }
-  }, [filtredGoods]);
+  }, []);
 
   return (
     <SearchPageContainer>

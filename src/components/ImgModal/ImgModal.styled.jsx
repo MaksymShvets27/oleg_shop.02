@@ -26,9 +26,6 @@ export const ImgModal = styled.div`
   cursor: pointer;
   background-position: 50% 50%;
   background-size: cover;
-  @media (min-width: 768px) {
-    width: 40%;
-  }
 `;
 
 export const ImgModalImgNextIcon = styled(CardModalImgNextIcon)`
@@ -55,7 +52,6 @@ export const ImgModalImgNextIcon = styled(CardModalImgNextIcon)`
     padding: 15px;
     width: 75px;
     height: 75px;
-    right: 20%;
   }
 
   @media (min-width: 1440px) {
@@ -72,7 +68,7 @@ export const ImgModalImgPreviousIcon = styled(CardModalImgPreviousIcon)`
   padding: 10px;
   position: absolute;
   top: 35%;
-  left: 10%;
+  left: 5%;
   width: 55px;
   height: 55px;
   cursor: pointer;
@@ -88,7 +84,6 @@ export const ImgModalImgPreviousIcon = styled(CardModalImgPreviousIcon)`
     padding: 15px;
     width: 75px;
     height: 75px;
-    left: 20%;
   }
   @media (min-width: 1440px) {
     padding: 15px;
