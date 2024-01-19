@@ -88,6 +88,8 @@ export const SearchPage = () => {
       arr.push({ ...doc.data(), id: doc.id });
     });
     const filteredArr = [...new Set(arr)];
+    arr = [];
+
     setFiltredGoods(filteredArr);
   };
 
@@ -1007,8 +1009,6 @@ export const SearchPage = () => {
     ) {
       getGoodsBySexAndSize();
     }
-    const filteredArr = [...new Set(filtredGoods)];
-    setFiltredGoods(filteredArr);
   }, [filter || categorySelect || sexFilter || sizeFilter]);
 
   useEffect(() => {
@@ -1141,8 +1141,6 @@ export const SearchPage = () => {
     if (filtredGoods.length > 0 && filtredGoods.length < listLength) {
       getMore();
     }
-    const filteredArr = [...new Set(filtredGoods)];
-    setFiltredGoods(filteredArr);
   }, [filter || categorySelect || sexFilter || sizeFilter]);
 
   return (
