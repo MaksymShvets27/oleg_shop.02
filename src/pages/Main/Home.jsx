@@ -76,10 +76,12 @@ export const MainPage = () => {
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
     setLastElements(lastVisible);
 
+    let arr = [];
     documentSnapshots.docs.map((doc) => {
-      setGoods((prevstate) => [...prevstate, { ...doc.data(), id: doc.id }]);
+      arr.push({ ...doc.data(), id: doc.id });
     });
-    // .sort((a, b) => (a.createTime.seconds > b.createTime.seconds ? -1 : 1));
+    const filteredArr = [...new Set(arr)];
+    setGoods(filteredArr);
   };
 
   const getNewPosts = async () => {

@@ -83,13 +83,12 @@ export const SearchPage = () => {
     const lastVisible =
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
     setLastElements(lastVisible);
-
+    let arr = [];
     documentSnapshots.docs.map((doc) => {
-      setFiltredGoods((prevstate) => [
-        ...prevstate,
-        { ...doc.data(), id: doc.id },
-      ]);
+      arr.push({ ...doc.data(), id: doc.id });
     });
+    const filteredArr = [...new Set(arr)];
+    setFiltredGoods(filteredArr);
   };
 
   const getNewPosts = async () => {
@@ -894,7 +893,7 @@ export const SearchPage = () => {
   };
 
   useEffect(() => {
-    setFiltredGoods(24);
+    setListLength(24);
     if (
       !(filter.length > 0) &&
       !categorySelect &&
@@ -1008,7 +1007,7 @@ export const SearchPage = () => {
     ) {
       getGoodsBySexAndSize();
     }
-  }, [filter, categorySelect, sexFilter, sizeFilter]);
+  }, [filter || categorySelect || sexFilter || sizeFilter]);
 
   useEffect(() => {
     if (document.getElementById("checkboxes")) {
@@ -1018,7 +1017,7 @@ export const SearchPage = () => {
       }
     }
     setSizeFilter([]);
-  }, [filter, categorySelect, sexFilter]);
+  }, [filter || categorySelect || sexFilter]);
 
   const getMore = () => {
     if (
@@ -1139,12 +1138,8 @@ export const SearchPage = () => {
   useEffect(() => {
     if (filtredGoods.length > 0 && filtredGoods.length < listLength) {
       getMore();
-      const uniqueGoods = filtredGoods.filter((item, index) => {
-        return arr.indexOf(item) === index;
-      });
-      setFiltredGoods(uniqueGoods);
     }
-  }, []);
+  }, [filter || categorySelect || sexFilter || sizeFilter]);
 
   return (
     <SearchPageContainer>
