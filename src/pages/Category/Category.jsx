@@ -19,13 +19,14 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/selectors";
+import { categoryList } from "../../constants/SelectCategory/SelectCategory";
 
 export const CategoryPage = () => {
   const [goods, setGoods] = useState([]);
   const user = useSelector(selectUser);
   const categoryPageList = [];
   const navigate = useNavigate();
-
+  const categoryListArray = [];
   const [openModal, setOpenModal] = useState(false);
   const [card, setCard] = useState();
 
@@ -63,65 +64,76 @@ export const CategoryPage = () => {
   });
   categoryPageList.sort();
 
+  categoryList.map((item) => {
+    if (item.category) {
+      item.category.map((subItem) => {
+        categoryListArray.push(subItem);
+      });
+    } else {
+      categoryListArray.push(item.name);
+    }
+  });
   return (
     <>
       <CategoryGoodsList>
         {categoryPageList.map((category) => {
-          let i = 0;
-          return (
-            <CategoryGoodsListItem>
-              <CategoryGoodsListTitle>{category}</CategoryGoodsListTitle>
-              <CategoryItemGoodsList>
-                {goods.map((item, index) => {
-                  if (item.category === category) {
-                    i++;
-                    if (
-                      (window.innerWidth >= 2160 && i <= 8) ||
-                      (window.innerWidth >= 1152 && i <= 6) ||
-                      (window.innerWidth < 1152 && i <= 4)
-                    ) {
-                      return (
-                        <GoodsListItemStyled
-                          key={index}
-                          onClick={() => handleOpenModal(item)}
-                          style={{
-                            backgroundImage: `url(${
-                              typeof item.image === "string"
-                                ? item.image
-                                : item.image[0]
-                            })`,
-                          }}
-                        >
-                          {user.favoriteList &&
-                            user.favoriteList.map((good) => {
-                              if (good.name === item.name) {
-                                return <StyledGrStar />;
-                              }
-                            })}
-                          {date - item.createTime.seconds < 259200 && (
-                            <GoodsListItemIsNew>Новинка!</GoodsListItemIsNew>
-                          )}
-                          <GoodsListItemInfoStyled>
-                            <GoodsListItemName>{item.name}</GoodsListItemName>
-                            <p>{item.price} грн.</p>
-                          </GoodsListItemInfoStyled>
-                        </GoodsListItemStyled>
-                      );
+          if (categoryListArray.includes(category)) {
+            let i = 0;
+            return (
+              <CategoryGoodsListItem>
+                <CategoryGoodsListTitle>{category}</CategoryGoodsListTitle>
+                <CategoryItemGoodsList>
+                  {goods.map((item, index) => {
+                    if (item.category === category) {
+                      i++;
+                      if (
+                        (window.innerWidth >= 2160 && i <= 8) ||
+                        (window.innerWidth >= 1152 && i <= 6) ||
+                        (window.innerWidth < 1152 && i <= 4)
+                      ) {
+                        return (
+                          <GoodsListItemStyled
+                            key={index}
+                            onClick={() => handleOpenModal(item)}
+                            style={{
+                              backgroundImage: `url(${
+                                typeof item.image === "string"
+                                  ? item.image
+                                  : item.image[0]
+                              })`,
+                            }}
+                          >
+                            {user.favoriteList &&
+                              user.favoriteList.map((good) => {
+                                if (good.name === item.name) {
+                                  return <StyledGrStar />;
+                                }
+                              })}
+                            {date - item.createTime.seconds < 259200 && (
+                              <GoodsListItemIsNew>Новинка!</GoodsListItemIsNew>
+                            )}
+                            <GoodsListItemInfoStyled>
+                              <GoodsListItemName>{item.name}</GoodsListItemName>
+                              <p>{item.price} грн.</p>
+                            </GoodsListItemInfoStyled>
+                          </GoodsListItemStyled>
+                        );
+                      }
                     }
+                  })}
+                </CategoryItemGoodsList>
+                <CategoryItemButtonMore
+                  onClick={() =>
+                    navigate("/search", {
+                      state: { category },
+                    })
                   }
-                })}
-              </CategoryItemGoodsList>
-              <CategoryItemButtonMore
-                onClick={() =>
-                  navigate("/search", {
-                    state: { category },
-                  })
-                }
-              >
-                Побачити більше
-              </CategoryItemButtonMore>
-            </CategoryGoodsListItem>
-          );
+                >
+                  Побачити більше
+                </CategoryItemButtonMore>
+              </CategoryGoodsListItem>
+            );
+          }
         })}
       </CategoryGoodsList>
       {openModal && <CardModal card={card} closeModal={closeModal} />}
