@@ -3,9 +3,9 @@ import { authSlice } from "./auth.slice";
 const { addGoodToCashList, removeGoodFromCashList } = authSlice.actions;
 
 const cashListAddGood =
-  ({ id, name, image, price }) =>
+  ({ id, name, image, price, number }) =>
   (dispatch, getState) => {
-    dispatch(addGoodToCashList({ id, name, image, price }));
+    dispatch(addGoodToCashList({ id, name, image, price, number }));
   };
 
 const cashListRemoveGood = (index) => (dispatch, getState) => {

@@ -45,7 +45,7 @@ export const OrdersList = () => {
 
   useEffect(() => {
     getAllOrders();
-  });
+  }, []);
 
   return (
     <OrderListStyled>
@@ -90,7 +90,7 @@ export const OrdersList = () => {
                       })`,
                     }}
                   />
-                  <p>Id товару: {item.id}</p>
+                  <p>Код товару: {item.number ? item.number : "відсутній"}</p>
                   <p>Назва: {item.name}</p>
                   <p>Ціна: {item.price}</p>
                 </>

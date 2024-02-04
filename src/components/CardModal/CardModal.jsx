@@ -163,6 +163,10 @@ export const CardModal = ({ card, closeModal }) => {
               <CardModalTitle>{card.name.join(" ")}</CardModalTitle>
               <>
                 <p>
+                  <span style={{ fontWeight: "bolder" }}>Код продукту: </span>
+                  {card.number}
+                </p>
+                <p>
                   <span style={{ fontWeight: "bolder" }}>Ціна: </span>
                   {card.price} грн.
                 </p>

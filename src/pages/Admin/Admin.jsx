@@ -37,6 +37,7 @@ export const AdminPage = () => {
   const dispatch = useDispatch();
 
   const [goods, setGoods] = useState([]);
+  const [goodNumber, setGoodNumber] = useState(state ? state.number : "");
   const [image, setImg] = useState(state ? state.image : "");
   const [name, setName] = useState(state ? state.name.join(" ") : "");
   const [price, setPrice] = useState(state ? state.price : "");
@@ -68,14 +69,24 @@ export const AdminPage = () => {
     const form = document.getElementById("form");
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      const { image, name, price, sex, producent, category, size, otherInfo } =
-        this.elements;
+      const {
+        image,
+        name,
+        price,
+        sex,
+        producent,
+        category,
+        size,
+        otherInfo,
+        number,
+      } = this.elements;
       const imgArray = image.value.split(" ").filter((img) => {
         if (img) {
           return img;
         }
       });
       const data = {
+        number: number.value,
         image: imgArray,
         name: name.value.split(" "),
         price: price.value,
@@ -167,6 +178,14 @@ export const AdminPage = () => {
       {/* <button onClick={takeCardByImg}>Take one card</button> */}
 
       <AdminForm id="form">
+        <p>Номер товару</p>
+        <AdminFormTextArea
+          required
+          name="number"
+          placeholder="Додати номер товару"
+          value={goodNumber}
+          onChange={(event) => setGoodNumber(event.target.value)}
+        />
         <p>Малюнок</p>
         <AdminFormTextArea
           required
