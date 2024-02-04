@@ -50,7 +50,6 @@ export const CashListItemStyled = styled.li`
   display: flex;
   justify-content: center;
   width: 90%;
-  height: 50px;
   font-size: 8px;
   font-weight: bolder;
   justify-content: space-around;
@@ -71,7 +70,6 @@ export const CashListItemStyled = styled.li`
   @media (min-width: 768px) {
     font-size: 12px;
     width: 50%;
-    height: 100px;
     border-radius: 20px;
   }
   @media (min-width: 1440px) {

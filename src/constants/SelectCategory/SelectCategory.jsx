@@ -1,4 +1,4 @@
-export const clothesSize = ["xs", "s", "m", "l", "xl", "xxl", "xxxl"];
+export const clothesSize = ["XS", "S", "M", "L", "XL", "XXL", `XXXL`];
 
 export const bootsSize = [
   "35",

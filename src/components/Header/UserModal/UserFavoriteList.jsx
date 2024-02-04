@@ -44,7 +44,9 @@ export const UserFavorileList = () => {
                   }}
                 >
                   <FavoriteListItemInfoStyled>
-                    <FavoriteListItemName>{item.name}</FavoriteListItemName>
+                    <FavoriteListItemName>
+                      {item.name.join(" ")}
+                    </FavoriteListItemName>
                     <p>{item.price} грн.</p>
                   </FavoriteListItemInfoStyled>
                 </FavoriteListItemStyled>

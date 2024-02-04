@@ -40,7 +40,7 @@ export const CashListPage = () => {
                   }}
                 />
                 <CashCardInfo>
-                  <CashCardTitle>{card.name}</CashCardTitle>
+                  <CashCardTitle>{card.name.join(" ")}</CashCardTitle>
                   <CashCardPrice>{card.price} грн.</CashCardPrice>
                 </CashCardInfo>
                 <CashCardTrashButton

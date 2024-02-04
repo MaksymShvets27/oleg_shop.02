@@ -52,14 +52,14 @@ export const SearchPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [card, setCard] = useState();
   const [lastElements, setLastElements] = useState("");
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState([]);
   const [sexFilter, setSexFilter] = useState("");
   const [categorySelect, setCategorySelect] = useState(
     state && state.category ? state.category : ""
   );
   const [sizeFilter, setSizeFilter] = useState([]);
 
-  const order = ["xs", "s", "m", "l", "xl", "xl+"];
+  const order = ["XS", "S", "M", "L", "XL", "XXL", `XXXL`];
   let date = new Date().getTime() / 1000;
 
   const handleOpenModal = (item) => {
@@ -159,26 +159,28 @@ export const SearchPage = () => {
 
   const getGoodsByFilter = async () => {
     setFiltredGoods([]);
-    const first = query(collection(db, "goods"), orderBy("name"), limit(25));
+    const first = query(
+      collection(db, "goods"),
+      where("name", "array-contains-any", filter),
+      limit(25)
+    );
     const documentSnapshots = await getDocs(first);
     const lastVisible =
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
     setLastElements(lastVisible);
 
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        setFiltredGoods((prevstate) => [
-          ...prevstate,
-          { ...doc.data(), id: doc.id },
-        ]);
-      }
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
     });
   };
 
   const getMoreGoodsByFilter = async () => {
     const next = query(
       collection(db, "goods"),
-      orderBy("name"),
+      where("name", "array-contains-any", filter),
       startAfter(lastElements),
       limit(24)
     );
@@ -189,12 +191,10 @@ export const SearchPage = () => {
     setLastElements(lastVisible);
 
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        setFiltredGoods((prevstate) => [
-          ...prevstate,
-          { ...doc.data(), id: doc.id },
-        ]);
-      }
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
     });
   };
 
@@ -203,18 +203,18 @@ export const SearchPage = () => {
     const first = query(
       collection(db, "goods"),
       where("category", "==", categorySelect),
+      where("name", "array-contains-any", filter),
       orderBy("createTime", "desc"),
       limit(24)
     );
+
     const documentSnapshots = await getDocs(first);
     const lastVisible =
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
     setLastElements(lastVisible);
     let array = [];
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        array.push({ ...doc.data(), id: doc.id });
-      }
+      array.push({ ...doc.data(), id: doc.id });
     });
     setFiltredGoods(array);
   };
@@ -223,6 +223,7 @@ export const SearchPage = () => {
     const next = query(
       collection(db, "goods"),
       where("category", "==", categorySelect),
+      where("name", "array-contains-any", filter),
       orderBy("createTime", "desc"),
       startAfter(lastElements),
       limit(24)
@@ -234,12 +235,10 @@ export const SearchPage = () => {
     setLastElements(lastVisible);
 
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        setFiltredGoods((prevstate) => [
-          ...prevstate,
-          { ...doc.data(), id: doc.id },
-        ]);
-      }
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
     });
   };
 
@@ -293,6 +292,7 @@ export const SearchPage = () => {
     setFiltredGoods([]);
     const first = query(
       collection(db, "goods"),
+      where("name", "array-contains-any", filter),
       where("sex", "==", sexFilter),
       orderBy("name"),
       limit(25)
@@ -303,18 +303,17 @@ export const SearchPage = () => {
     setLastElements(lastVisible);
 
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        setFiltredGoods((prevstate) => [
-          ...prevstate,
-          { ...doc.data(), id: doc.id },
-        ]);
-      }
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
     });
   };
 
   const getMoreGoodsByFilterAndSex = async () => {
     const next = query(
       collection(db, "goods"),
+      where("name", "array-contains-any", filter),
       where("sex", "==", sexFilter),
       orderBy("name"),
       startAfter(lastElements),
@@ -327,12 +326,10 @@ export const SearchPage = () => {
     setLastElements(lastVisible);
 
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        setFiltredGoods((prevstate) => [
-          ...prevstate,
-          { ...doc.data(), id: doc.id },
-        ]);
-      }
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
     });
   };
 
@@ -340,20 +337,20 @@ export const SearchPage = () => {
     setFiltredGoods([]);
     const first = query(
       collection(db, "goods"),
+      where("name", "array-contains-any", filter),
       where("category", "==", categorySelect),
       where("sex", "==", sexFilter),
       orderBy("createTime", "desc"),
       limit(24)
     );
+    console.log(filter, categorySelect, sexFilter);
     const documentSnapshots = await getDocs(first);
     const lastVisible =
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
     setLastElements(lastVisible);
     let array = [];
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        array.push({ ...doc.data(), id: doc.id });
-      }
+      array.push({ ...doc.data(), id: doc.id });
     });
     setFiltredGoods(array);
   };
@@ -362,6 +359,7 @@ export const SearchPage = () => {
     const next = query(
       collection(db, "goods"),
       where("category", "==", categorySelect),
+      where("name", "array-contains-any", filter),
       where("sex", "==", sexFilter),
       orderBy("createTime", "desc"),
       startAfter(lastElements),
@@ -374,12 +372,10 @@ export const SearchPage = () => {
     setLastElements(lastVisible);
 
     documentSnapshots.docs.map((doc) => {
-      if (doc.data().name.toLowerCase().includes(filter.toLowerCase())) {
-        setFiltredGoods((prevstate) => [
-          ...prevstate,
-          { ...doc.data(), id: doc.id },
-        ]);
-      }
+      setFiltredGoods((prevstate) => [
+        ...prevstate,
+        { ...doc.data(), id: doc.id },
+      ]);
     });
   };
 
@@ -427,56 +423,6 @@ export const SearchPage = () => {
     });
   };
   // -----------------------------------------------
-  const getPostsBySize = async () => {
-    setFiltredGoods([]);
-    const first = query(
-      collection(db, "goods"),
-      orderBy("createTime", "desc"),
-      limit(24)
-    );
-    const documentSnapshots = await getDocs(first);
-    // Get the last visible document
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
-
-  const getNewPostsBySize = async () => {
-    const next = query(
-      collection(db, "goods"),
-      orderBy("createTime", "desc"),
-      startAfter(lastElements),
-      limit(24)
-    );
-    const documentSnapshots = await getDocs(next);
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
 
   const getGoodsByCategoryAndSize = async () => {
     setFiltredGoods([]);
@@ -494,8 +440,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -521,61 +466,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
-
-  const getGoodsByFilterAndSize = async () => {
-    setFiltredGoods([]);
-    const first = query(collection(db, "goods"), orderBy("name"), limit(25));
-    const documentSnapshots = await getDocs(first);
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
-
-  const getMoreGoodsByFilterAndSize = async () => {
-    const next = query(
-      collection(db, "goods"),
-      orderBy("name"),
-      startAfter(lastElements),
-      limit(24)
-    );
-    const documentSnapshots = await getDocs(next);
-    // Get the last visible document
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -589,6 +480,7 @@ export const SearchPage = () => {
     setFiltredGoods([]);
     const first = query(
       collection(db, "goods"),
+      where("name", "array-contains-any", filter),
       where("category", "==", categorySelect),
       orderBy("createTime", "desc"),
       limit(24)
@@ -600,11 +492,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -618,6 +506,7 @@ export const SearchPage = () => {
     const next = query(
       collection(db, "goods"),
       where("category", "==", categorySelect),
+      where("name", "array-contains-any", filter),
       orderBy("createTime", "desc"),
       startAfter(lastElements),
       limit(24)
@@ -630,11 +519,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -661,8 +546,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -689,68 +573,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
-
-  const getGoodsByFilterAndSexAndSize = async () => {
-    setFiltredGoods([]);
-    const first = query(
-      collection(db, "goods"),
-      where("sex", "==", sexFilter),
-      orderBy("name"),
-      limit(25)
-    );
-    const documentSnapshots = await getDocs(first);
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
-
-  const getMoreGoodsByFilterAndSexAndSize = async () => {
-    const next = query(
-      collection(db, "goods"),
-      where("sex", "==", sexFilter),
-      where("size", "==", sizeFilter),
-      orderBy("name"),
-      startAfter(lastElements),
-      limit(24)
-    );
-    const documentSnapshots = await getDocs(next);
-    // Get the last visible document
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -764,6 +587,7 @@ export const SearchPage = () => {
     setFiltredGoods([]);
     const first = query(
       collection(db, "goods"),
+      where("name", "array-contains-any", filter),
       where("category", "==", categorySelect),
       where("sex", "==", sexFilter),
       orderBy("createTime", "desc"),
@@ -776,11 +600,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -793,6 +613,7 @@ export const SearchPage = () => {
   const getMoreGoodsByFilterAndCategoryAndSexAndSize = async () => {
     const next = query(
       collection(db, "goods"),
+      where("name", "array-contains-any", filter),
       where("category", "==", categorySelect),
       where("sex", "==", sexFilter),
       orderBy("createTime", "desc"),
@@ -807,11 +628,7 @@ export const SearchPage = () => {
 
     documentSnapshots.docs.map((doc) => {
       sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (
-          doc.data().size.toLowerCase().includes(size) &&
-          doc.data().name.toLowerCase().includes(filter.toLowerCase())
-        ) {
+        if (doc.data().size.includes(size)) {
           setFiltredGoods((prevstate) => [
             ...prevstate,
             { ...doc.data(), id: doc.id },
@@ -821,59 +638,6 @@ export const SearchPage = () => {
     });
   };
 
-  const getGoodsBySexAndSize = async () => {
-    setFiltredGoods([]);
-    const first = query(
-      collection(db, "goods"),
-      where("sex", "==", sexFilter),
-      orderBy("createTime", "desc"),
-      limit(24)
-    );
-    const documentSnapshots = await getDocs(first);
-    // Get the last visible document
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
-
-  const getMoreGoodsBySexAndSize = async () => {
-    const next = query(
-      collection(db, "goods"),
-      where("sex", "==", sexFilter),
-      orderBy("createTime", "desc"),
-      startAfter(lastElements),
-      limit(24)
-    );
-    const documentSnapshots = await getDocs(next);
-    // Get the last visible document
-    const lastVisible =
-      documentSnapshots.docs[documentSnapshots.docs.length - 1];
-    setLastElements(lastVisible);
-
-    documentSnapshots.docs.map((doc) => {
-      sizeFilter.map((size) => {
-        console.log(doc.data().size);
-        if (doc.data().size.toLowerCase().includes(size)) {
-          setFiltredGoods((prevstate) => [
-            ...prevstate,
-            { ...doc.data(), id: doc.id },
-          ]);
-        }
-      });
-    });
-  };
   //---------------------
   const setSizeGoods = (boolean, size) => {
     if (boolean && !sizeFilter.includes(size)) {
@@ -925,7 +689,7 @@ export const SearchPage = () => {
     ) {
       getGoodsByFilterAndCategory();
     } else if (
-      !(filter.length > 0) &&
+      !filter.length > 0 &&
       categorySelect &&
       sexFilter &&
       !sizeFilter.length > 0
@@ -954,25 +718,11 @@ export const SearchPage = () => {
       getGoodsBySex();
     } else if (
       !(filter.length > 0) &&
-      !categorySelect &&
-      !sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getPostsBySize();
-    } else if (
-      !(filter.length > 0) &&
       categorySelect &&
       !sexFilter &&
       sizeFilter.length > 0
     ) {
       getGoodsByCategoryAndSize();
-    } else if (
-      filter.length > 0 &&
-      !categorySelect &&
-      !sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getGoodsByFilterAndSize();
     } else if (
       filter.length > 0 &&
       categorySelect &&
@@ -989,27 +739,13 @@ export const SearchPage = () => {
       getGoodsByCategoryAndSexAndSize();
     } else if (
       filter.length > 0 &&
-      !categorySelect &&
-      sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getGoodsByFilterAndSexAndSize();
-    } else if (
-      filter.length > 0 &&
       categorySelect &&
       sexFilter &&
       sizeFilter.length > 0
     ) {
       getGoodsByFilterAndCategoryAndSexAndSize();
-    } else if (
-      !filter.length > 0 &&
-      !categorySelect &&
-      sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getGoodsBySexAndSize();
     }
-  }, [filter || categorySelect || sexFilter || sizeFilter]);
+  }, [filter, categorySelect, sexFilter, sizeFilter]);
 
   useEffect(() => {
     if (document.getElementById("checkboxes")) {
@@ -1019,7 +755,7 @@ export const SearchPage = () => {
       }
     }
     setSizeFilter([]);
-  }, [filter || categorySelect || sexFilter]);
+  }, [filter, categorySelect, sexFilter]);
 
   const getMore = () => {
     if (
@@ -1080,25 +816,11 @@ export const SearchPage = () => {
       getMoreGoodsBySex();
     } else if (
       !(filter.length > 0) &&
-      !categorySelect &&
-      !sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getNewPostsBySize();
-    } else if (
-      !(filter.length > 0) &&
       categorySelect &&
       !sexFilter &&
       sizeFilter.length > 0
     ) {
       getMoreGoodsByCategoryAndSize();
-    } else if (
-      filter.length > 0 &&
-      !categorySelect &&
-      !sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getMoreGoodsByFilterAndSize();
     } else if (
       filter.length > 0 &&
       categorySelect &&
@@ -1115,25 +837,11 @@ export const SearchPage = () => {
       getMoreGoodsByCategoryAndSexAndSize();
     } else if (
       filter.length > 0 &&
-      !categorySelect &&
-      sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getMoreGoodsByFilterAndSexAndSize();
-    } else if (
-      filter.length > 0 &&
       categorySelect &&
       sexFilter &&
       sizeFilter.length > 0
     ) {
       getMoreGoodsByFilterAndCategoryAndSexAndSize();
-    } else if (
-      !filter.length > 0 &&
-      !categorySelect &&
-      sexFilter &&
-      sizeFilter.length > 0
-    ) {
-      getMoreGoodsBySexAndSize();
     }
   };
 
@@ -1141,14 +849,28 @@ export const SearchPage = () => {
     if (filtredGoods.length > 0 && filtredGoods.length < listLength) {
       getMore();
     }
-  }, [filter || categorySelect || sexFilter || sizeFilter]);
+  }, [filter, categorySelect, sexFilter, sizeFilter]);
 
   return (
     <SearchPageContainer>
       <SearchPageInput
         placeholder="Назва товару"
         onChange={(event) => {
-          setFilter(event.target.value);
+          if (event.target.value === "") {
+            setFilter([]);
+          } else {
+            let inputArr = event.target.value.split(" ");
+            let comboArr = [];
+            inputArr.map((item) => {
+              comboArr.push(item.toLowerCase());
+              comboArr.push(item.toUpperCase());
+              comboArr.push(
+                item.substring(0, 1).toUpperCase() +
+                  item.substring(1).toLowerCase()
+              );
+            });
+            setFilter(comboArr.filter((item) => item != ""));
+          }
         }}
       />
       <SearchPageSelect
@@ -1289,7 +1011,7 @@ export const SearchPage = () => {
                     <GoodsListItemIsNew>Новинка!</GoodsListItemIsNew>
                   )}
                   <GoodsListItemInfoStyled>
-                    <GoodsListItemName>{item.name}</GoodsListItemName>
+                    <GoodsListItemName>{item.name.join(" ")}</GoodsListItemName>
                     <p>{item.price} грн.</p>
                   </GoodsListItemInfoStyled>
                 </GoodsListItemStyled>

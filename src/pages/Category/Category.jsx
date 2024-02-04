@@ -113,7 +113,9 @@ export const CategoryPage = () => {
                               <GoodsListItemIsNew>Новинка!</GoodsListItemIsNew>
                             )}
                             <GoodsListItemInfoStyled>
-                              <GoodsListItemName>{item.name}</GoodsListItemName>
+                              <GoodsListItemName>
+                                {item.name.join(" ")}
+                              </GoodsListItemName>
                               <p>{item.price} грн.</p>
                             </GoodsListItemInfoStyled>
                           </GoodsListItemStyled>

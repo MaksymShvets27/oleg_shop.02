@@ -11,7 +11,18 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { categoryList } from "../../constants/SelectCategory/SelectCategory";
 import { nanoid } from "nanoid";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  limit,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../../../firebase/config";
 import { selectUser } from "../../redux/selectors";
 import { OrderListStyled } from "./OrdersList.styled";
@@ -25,11 +36,18 @@ export const AdminPage = () => {
   const state = location.state;
   const dispatch = useDispatch();
 
+  const [goods, setGoods] = useState([]);
   const [image, setImg] = useState(state ? state.image : "");
-  const [name, setName] = useState(state ? state.name : "");
+  const [name, setName] = useState(state ? state.name.join(" ") : "");
   const [price, setPrice] = useState(state ? state.price : "");
   const [producent, setProducent] = useState(state ? state.producent : "");
-  const [size, setSize] = useState(state ? state.size : "");
+  const [size, setSize] = useState(
+    state
+      ? typeof state.size !== "string"
+        ? state.size.join("-")
+        : state.size
+      : ""
+  );
   const [otherInfo, setOtherInfo] = useState(state ? state.otherInfo : "");
 
   const addGood = async (data) => {
@@ -59,12 +77,12 @@ export const AdminPage = () => {
       });
       const data = {
         image: imgArray,
-        name: name.value,
+        name: name.value.split(" "),
         price: price.value,
         sex: sex.value || "",
         producent: producent.value || "",
         category: category.value,
-        size: size.value || "",
+        size: size.value.split("-") || "",
         otherInfo: otherInfo.value || "",
         createTime: new Date(),
       };
@@ -78,8 +96,76 @@ export const AdminPage = () => {
       navigation("/");
     }
   });
+
+  // const takeCardByImg = async () => {
+  //   const img = [
+  //     "https://i.ibb.co/wYSYsv4/photo-8-2024-01-29-10-22-00.jpg",
+  //     "https://i.ibb.co/FJ8wq2M/photo-6-2024-01-29-10-22-05.jpg",
+  //   ];
+  //   const first = query(
+  //     collection(db, "goods"),
+  //     where("image", "array-contains-any", img),
+  //     limit(24)
+  //   );
+  //   const documentSnapshots = await getDocs(first);
+  //   console.log(documentSnapshots.docs.map((doc) => console.log(doc.data())));
+  // };
+  // -----Clear Categories--------------------------
+  // const getAllPost = async () => {
+  //   onSnapshot(collection(db, "goods"), (data) => {
+  //     setGoods(
+  //       data.docs
+  //         .map((doc) => ({ ...doc.data(), id: doc.id }))
+  //         .sort((a, b) =>
+  //           a.createTime.seconds > b.createTime.seconds ? -1 : 1
+  //         )
+  //     );
+  //   });
+  // };
+
+  // const setGood = async (data) => {
+  //   await setDoc(doc(db, "goods", `${data.id}`), data);
+  // };
+
+  // const changeName = () => {
+  //   goods.map((good) => {
+  //     let newSizeLikeArray = [];
+  //     let newNameLikeArray = [];
+  //     newNameLikeArray = good.name.split(" ");
+  //     if (good.size) {
+  //       newSizeLikeArray = good.size.split("-");
+
+  //       setGood({
+  //         ...good,
+  //         name: newNameLikeArray,
+  //         size: newSizeLikeArray,
+  //       });
+  //     } else {
+  //       setGood({
+  //         ...good,
+  //         name: newNameLikeArray,
+  //       });
+  //     }
+  //   });
+  // };
+
+  // const ViewNames = async () => {
+  //   goods.map((item) => {
+  //     if (typeof item.name === "string") {
+  //       console.log("string");
+  //     } else {
+  //       console.log("array");
+  //     }
+  //   });
+  // };
+  //--------------------------------------------
   return (
     <>
+      {/* <button onClick={getAllPost}>TakeAll</button>
+      <button onClick={changeName}>Change Name</button>
+      <button onClick={ViewNames}>ViewNames</button> */}
+      {/* <button onClick={takeCardByImg}>Take one card</button> */}
+
       <AdminForm id="form">
         <p>Малюнок</p>
         <AdminFormTextArea

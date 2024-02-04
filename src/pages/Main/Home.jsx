@@ -70,7 +70,6 @@ export const MainPage = () => {
       limit(24)
     );
     const documentSnapshots = await getDocs(first);
-    console.log(documentSnapshots.docs.map((doc) => console.log(doc.data())));
     // Get the last visible document
     const lastVisible =
       documentSnapshots.docs[documentSnapshots.docs.length - 1];
@@ -133,7 +132,7 @@ export const MainPage = () => {
                     <GoodsListItemIsNew>Новинка!</GoodsListItemIsNew>
                   )}
                   <GoodsListItemInfoStyled>
-                    <GoodsListItemName>{item.name}</GoodsListItemName>
+                    <GoodsListItemName>{item.name.join(" ")}</GoodsListItemName>
                     <p>{item.price} грн.</p>
                   </GoodsListItemInfoStyled>
                 </GoodsListItemStyled>

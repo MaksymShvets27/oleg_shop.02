@@ -160,7 +160,7 @@ export const CardModal = ({ card, closeModal }) => {
                 ))}
             </CardModalLeftDiv>
             <CardModalInfo>
-              <CardModalTitle>{card.name}</CardModalTitle>
+              <CardModalTitle>{card.name.join(" ")}</CardModalTitle>
               <>
                 <p>
                   <span style={{ fontWeight: "bolder" }}>Ціна: </span>
@@ -194,7 +194,9 @@ export const CardModal = ({ card, closeModal }) => {
                 <>
                   <p>
                     <span style={{ fontWeight: "bolder" }}>Розмір: </span>
-                    {card.size}
+                    {typeof card.size !== "string"
+                      ? card.size.join("-")
+                      : card.size}
                   </p>
                 </>
               )}
