@@ -92,6 +92,7 @@ export const OrdersList = () => {
                   />
                   <p>Код товару: {item.number ? item.number : "відсутній"}</p>
                   <p>Назва: {item.name}</p>
+                  {item.selectSize && <p>Розмір: {item.selectSize}</p>}
                   <p>Ціна: {item.price}</p>
                 </>
               );

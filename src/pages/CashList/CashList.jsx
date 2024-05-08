@@ -41,6 +41,10 @@ export const CashListPage = () => {
                 />
                 <CashCardInfo>
                   <CashCardTitle>{card.name.join(" ")}</CashCardTitle>
+                  {console.log(card)}
+                  {card.selectSize && (
+                    <CashCardPrice>Розмір: {card.selectSize}</CashCardPrice>
+                  )}
                   <CashCardPrice>{card.price} грн.</CashCardPrice>
                 </CashCardInfo>
                 <CashCardTrashButton
@@ -52,7 +56,7 @@ export const CashListPage = () => {
             );
           })}
           <CashListUserMessege
-            placeholder="Додаткова інформація. Наприклад: колір, розмір."
+            placeholder="Додаткова інформація"
             onChange={(e) => setUserMessege(e.target.value)}
           ></CashListUserMessege>
           <CashListSendButton

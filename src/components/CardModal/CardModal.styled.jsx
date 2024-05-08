@@ -286,3 +286,31 @@ export const CardModalOtherInfo = styled.p`
     font-size: 18px;
   }
 `;
+
+export const CardModalSelectSize = styled.select`
+  max-width: 230px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  color: #1a1a1a;
+  cursor: pointer;
+  padding: 0;
+  outline: none;
+
+  font-size: 9px;
+  @media (min-width: 768px) {
+    font-size: 12px;
+  }
+  @media (min-width: 1440px) {
+    font-size: 24px;
+  }
+
+  border: 2px solid #1a1a1a;
+  &:hover {
+    border-color: green;
+  }
+  &:focus {
+    border-color: green;
+  }
+`;
+
+export const CardModalOptionSize = styled.option``;

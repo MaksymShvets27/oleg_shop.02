@@ -7,7 +7,9 @@ import {
   CardModalInfo,
   CardModalLeftDiv,
   CardModalMainDiv,
+  CardModalOptionSize,
   CardModalOtherInfo,
+  CardModalSelectSize,
   CardModalStyled,
   CardModalTitle,
   CardRemoveModalBtn,
@@ -45,6 +47,7 @@ export const CardModal = ({ card, closeModal }) => {
   const [openImgModal, setOpenImgModal] = useState(false);
   const user = useSelector(selectUser);
   const [currentImg, setCurrentImg] = useState(0);
+  const [modalSelectSize, setModalSelectSize] = useState("");
   let favoriteList = user.favoriteList;
   let arrayName =
     favoriteList.length > 0 ? user.favoriteList.map((item) => item.name) : [];
@@ -66,7 +69,8 @@ export const CardModal = ({ card, closeModal }) => {
   };
 
   const addToCashList = () => {
-    dispatch(cashListAddGood(card));
+    dispatch(cashListAddGood({ ...card, selectSize: modalSelectSize }));
+    console.log(modalSelectSize);
   };
 
   const sendToFavoriteList = async () => {
@@ -194,13 +198,21 @@ export const CardModal = ({ card, closeModal }) => {
                   </p>
                 </>
               )}
-              {card.size && (
+              {card.size.length >= 2 && (
                 <>
                   <p>
                     <span style={{ fontWeight: "bolder" }}>Розмір: </span>
-                    {typeof card.size !== "string"
-                      ? card.size.join("-")
-                      : card.size}
+                    <CardModalSelectSize
+                      onChange={(event) => {
+                        setModalSelectSize(event.target.value);
+                      }}
+                    >
+                      {card.size.map((item) => {
+                        return (
+                          <CardModalOptionSize>{item}</CardModalOptionSize>
+                        );
+                      })}
+                    </CardModalSelectSize>
                   </p>
                 </>
               )}
